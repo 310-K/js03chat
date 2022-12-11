@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/sample.css">
+    <title>Chatアプリ</title>
+</head>
+<body>
+    
+<!-- コンテンツ表示画面 -->
+<div class="wrapper">
+    <header>
+        <h1>みんなのチャット</h1>
+    </header>
+
+    <!-- チャット画面 -->
+    <div id="output"></div>
+
+    <!-- 送信エリア -->
+    
+    <div id="sendedMsg">
+        <div>
+            <div>
+            <input type="text" id="uname" placeholder="名前">
+            </div>
+
+            <!-- col=テキストエリアの幅、rows=テキストエリアの行数 -->
+            <ul id="senderText">
+                <li id="icon">
+                    <ul id="iconList">
+                        <li><img src="./imgs/buke.png" alt=""></li>
+                        <!-- <li><img src="./imgs/caram.png" alt=""></li>
+                        <li><img src="./imgs/tuku.jpg" alt=""></li> -->
+                    </ul>
+                    <!-- <select name="" id="iconSelect">
+                        <option value="buke" data-imgsrc="./imgs/buke.png"></option>
+                    </select> -->
+                </li>
+                <li><textarea name="" id="text" rows="1"></textarea></li>
+                <li class=liSend>
+                    <button type="submit" id="send">
+                    <img src="./imgs/send-btn.jpg" alt="送信ボタン"></button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--/ コンテンツ表示画面 -->
+
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- JQuery -->
+
+
+<!--** 以下Firebase **-->
+<!-- SDK : Software Development Kit -->
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved } // {a}は便利機能aを取り出しているイメージ
+        from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.14.0/firebase-database.js";
+        // SDKのversionを揃える必要がある！
+        // URL後ろの方の.minを消去した→minは圧縮版になっている（今回は、圧縮版でなければ反応した）
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "",
+      authDomain: "fir-demo-ec060.firebaseapp.com",
+      projectId: "fir-demo-ec060",
+      storageBucket: "fir-demo-ec060.appspot.com",
+      messagingSenderId: "811762651981",
+      appId: "1:811762651981:web:e9cfe2f34591bcf9a99d04"
+    };
+  
+    // Initialize Firebase
+    // firebaseConfigの内容でアプリを初期化してください！という指示
+    const app = initializeApp(firebaseConfig);
+
+    const db = getDatabase(app); // Realtime DBに接続、getDatabaseはSDKで定義されているから使える！
+    const dbRef = ref(db, "chat"); // Realtime DB内の chat を使う
+
+    // var src = $(iconList).children('li').children('img').attr('src');
+    // console.log(src);
+
+
+    // #send がクリックされたら 名前・本文情報を取得してconsole.logで表示
+    $("#send").on("click", function () {
+            const msg = {
+                uname: $("#uname").val(),
+                icon: $(iconList).children('li').children('img').attr('src'),
+                text: $("#text").val()
+            };
+            const newPostRef = push(dbRef);
+            set(newPostRef, msg);
+            // 送信後に文字消去
+            $("#text").val("");
+        });
+    // newPostRefで何をやっているか？
+    // → (_repoの中に)そのmsgに対して一意のkeyが作成される
+
+    
+    // eはeventの略、イベントが発生した時に関数発動
+    $("#text").on("keydown", function (e) {
+        // console.log(e.keyCode);
+        // keyCode:13がEnterキーを表す（日本語の変換を確定するEnterは#229）
+        if(e.keyCode === 13){
+            const msg = {
+                uname: $("#uname").val(),
+                icon: $(iconList).children('li').children('img').attr('src'),
+                text: $("#text").val()
+            };
+            const newPostRef = push(dbRef);
+            set(newPostRef, msg);
+            // 送信後に文字消去
+            $("#text").val("");
+        }
+    })
+
+    // output欄に表示させる！
+    // onChildAddedは子要素が追加されたら＆ページ読み込み時に発動
+    onChildAdded(dbRef, function (data) {
+            const key = data.key;
+            const msg = data.val();
+            // ここでconstの空箱を作る
+            const msgElement = "";
+            console.log(msg.uname);
+            console.log(msg.icon);
+
+            // 送信者とDBのunameが一致したら右表示
+            if(msg.uname === $("#uname").val()){
+                // const msgElement = `<p class=userName>${msg.uname}</p><p class=right_balloon>${msg.text}</p>`;
+                // const msgElement = `<div class=myBalloon><p class=userName>${msg.uname}<img src=${msg.icon} class=outputIcon></p><p class=right_balloon>${msg.text}</p></div>`;
+                const msgElement = `<p class=userName>${msg.uname}<img src=${msg.icon} class=outputIcon></p><p class=right_balloon>${msg.text}</p>`;
+
+
+                $("#output").append(msgElement);
+            }else{
+                const msgElement = `<div><img src=${msg.icon} class=SOutputIcon><p class=elseName>${msg.uname}</p><p class=left_balloon>${msg.text}</p></div>`;
+                $("#output").append(msgElement);
+            }
+    
+            const outputList = $("#output");
+
+            // 自動スクロール
+            outputList[0].scrollTop = outputList[0].scrollHeight;
+        });
+    // chatの中にあるデータを順番に取ってきている
+
+    
+
+
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+
