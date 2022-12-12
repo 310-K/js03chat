@@ -122,6 +122,7 @@
         }
     })
 
+
     // output欄に表示させる！
     // onChildAddedは子要素が追加されたら＆ページ読み込み時に発動
     onChildAdded(dbRef, function (data) {
@@ -133,21 +134,18 @@
             console.log(msg.icon);
 
             // 送信者とDBのunameが一致したら右表示
-            if(msg.uname === $("#uname").val()){
+            if(msg.uname == $("#uname").val()){
                 // const msgElement = `<p class=userName>${msg.uname}</p><p class=right_balloon>${msg.text}</p>`;
                 // const msgElement = `<div class=myBalloon><p class=userName>${msg.uname}<img src=${msg.icon} class=outputIcon></p><p class=right_balloon>${msg.text}</p></div>`;
                 const msgElement = `<p class=userName>${msg.uname}<img src=${msg.icon} class=outputIcon></p><p class=right_balloon>${msg.text}</p>`;
-
-
                 $("#output").append(msgElement);
             }else{
                 const msgElement = `<div><img src=${msg.icon} class=SOutputIcon><p class=elseName>${msg.uname}</p><p class=left_balloon>${msg.text}</p></div>`;
                 $("#output").append(msgElement);
             }
-    
-            const outputList = $("#output");
 
             // 自動スクロール
+            const outputList = $("#output");
             outputList[0].scrollTop = outputList[0].scrollHeight;
         });
     // chatの中にあるデータを順番に取ってきている

@@ -22,7 +22,7 @@ header h1 {
 
 /* メッセージ表示領域 */
 #output {
-    height: 78vh;
+    height: 75vh;
     /* 親要素はみ出した箇所をスクロール表示にする */
     overflow: scroll;
     width: 100vw;
@@ -90,17 +90,18 @@ header h1 {
 
 #sendedMsg {
     width: 100vw;
-    height: 12vh;
+    height: 15vh;
     background-color: rgb(4, 234, 184);
     position: absolute;
     bottom: 0;
     display: flex;
-    align-items: center;
+    justify-content:space-around;
+    /* align-items: center; */
 }
 /* -----最下部固定 */
 
 #uname {
-    margin: 5px 10px;
+    margin: 10px 10px 5px;
     border: 0px solid #777;
     padding: 5px 10px;
     border:solid #777 0.5px;
@@ -113,10 +114,10 @@ header h1 {
     width: 100vvw;
 }
 
-#senderText li {
+/* #senderText li {
     margin: 5;
     vertical-align: middle;
-}
+} */
 
 
 /* #icon select {
@@ -129,7 +130,7 @@ header h1 {
 
 #icon img {
     margin-left: 10px;
-    width: 7vw;
+    width: 35px;
     border-radius: 50%;
     border: #fff solid 2px;
 }
@@ -149,7 +150,7 @@ header h1 {
 
 #text {
     display: block;
-    width: 70vw;
+    width: 60vw;
     margin-left: 10px;
     /* background: #f1f0f0; */
     border: 0px solid #777;
@@ -162,6 +163,8 @@ header h1 {
 #send {
     margin-left: 5px;
     padding: 0;
+    height: 35px;
+    width: 35px;
     /* width: 20vw; */
     background-color: rgb(4, 234, 184);
     border-style: none;
@@ -169,12 +172,12 @@ header h1 {
     cursor: pointer;
 }
 
-.liSend {
+/* .liSend {
     vertical-align: middle;
-}
+} */
 
 .liSend img {
-    width: 7vw;
+    width: 35px;
     object-fit: cover;
     /* object-position: 0px 2.5px; */
     border-radius: 50%;
